@@ -1,4 +1,6 @@
 from django.shortcuts import render, HttpResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 import pyrebase
 # Create your views here.
 
@@ -18,6 +20,14 @@ database = firebase.database()
 
 def index(request):
     
-    name = database.child('Professors').child('ABC123456').child('Name').get().val()
+    name = database.child('Professors').child('ABC100000').child('Name').get().val()
     print(name)
     return HttpResponse(name)
+
+@api_view(['POST', 'GET'])
+def check(request):
+    if request.method == 'POST':
+        print("found",request.data)
+        return Response(request.data)
+    else:
+        return Response({"detail": "No request found"})
