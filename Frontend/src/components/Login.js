@@ -1,33 +1,37 @@
 import React,{useState} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import { NavLink } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate} from 'react-router-dom';
+import axios from "axios";
 
 
 const Login= () => {
-
-  const history = useNavigate();
+  const url = "http://127.0.0.1:8000/home/login"
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    // Perform login logic here
-    // For demonstration purposes, let's assume the user is authenticated if the email and password are not empty
+  const handleLogin = async () => {
     if (email !== '' && password !== '') {
-      // Simulating a successful login
-      // You can replace this with your actual login logic
-      // If the login is successful, redirect to home page
-      history.push('/home');
+      try {
+        await axios.post(url, { email, password });
+        const response = await axios.get(url);
+        // Handle the response data if needed
+
+        if (response.data.status === 'valid') {
+          navigate('/'); // Use navigate() to redirect
+        }
+        else {
+          setError('Invalide email or password');
+        }
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       setError('Invalid email or password');
     }
   };
-  
-
-
-
 
   return (
     <>
@@ -127,15 +131,6 @@ const Login= () => {
     </div>
   </div>
 </section>
-
-
-
-      
-        
-
-
-
-
       
     </>
   )

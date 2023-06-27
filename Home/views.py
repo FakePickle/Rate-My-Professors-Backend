@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import pyrebase
+
 # Create your views here.
 
 config = {
@@ -30,4 +31,44 @@ def check(request):
         print("found",request.data)
         return Response(request.data)
     else:
-        return Response({"detail": "No request found"})
+        return Response({"detail": "This is check function"})
+    
+@api_view(['POST', 'GET'])
+def login(request):
+    Validation = {'status':'invalid'}
+
+    if request.method == 'POST':
+        email = request.data.get('email')
+        password = request.data.get('password')
+        try:
+            user = auth.sign_in_with_email_and_password(email,password)
+            Validation['status'] = 'valid'
+        except:
+            Validation['status'] = 'invalid'
+
+    else:
+        return Response(Validation)
+    return Response({"detail": "No request found"})
+
+
+@api_view(['POST', 'GET'])
+def signup(request):
+    Registration = {'status':'true'}
+
+    if request.method == 'POST':
+        email = request.data.get('email')
+        password = request.data.get('password')
+        print(email," ",password)
+        try:
+            user = auth.create_user_with_email_and_password(email,password)
+            Registration['status'] = 'true'
+            return Response(Registration)
+        except:
+            Registration['status'] = 'true'
+            return Response(Registration)
+
+    else:
+        return Response(Registration)
+    
+    return Response({"detail": "No request found"})
+    

@@ -6,7 +6,7 @@ import axios from 'axios';
 
 
 const Signup = () => {
-
+  const url = "http://127.0.0.1:8000/home/signup"
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,20 +29,17 @@ const Signup = () => {
 
     try {
       // Make an API request to your backend server's authentication endpoint
-      const response = await axios.post('/api/signup', {
-        name,
-        email,
-        password,
-      });
-
+      await axios.post(url, {name, email, password });
+      const response = axios.get(url)
+      console.log(response)
       // Handle the response from the server
       // If the signup was successful, redirect the user or automatically log them in
-      if (response.status === 200) {
+      if (response.status === 'true') {
         // Redirect the user to the login page
         // You can replace '/login' with the appropriate route for your application
         window.location.href = '/login';
       } else {
-        setError('Signup failed'); // Display a generic error message
+        setError('Signup failed false'); // Display a generic error message
       }
     } catch (error) {
       // Handle any errors that occur during the API request
@@ -125,7 +122,7 @@ const Signup = () => {
         
 
           <div className="text-center text-lg-start mt-4 pt-2">
-            <button type="button" className="btn btn-primary btn-lg"
+            <button type="button" className="btn btn-primary btn-lg" onClick={handleSignup}
               >Sign Up</button>
             <p className="small fw-bold mt-2 pt-1 mb-0"><NavLink to="/login"
                 className="link-danger">Already Have an Account</NavLink></p>
