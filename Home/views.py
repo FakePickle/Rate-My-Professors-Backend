@@ -35,25 +35,21 @@ def check(request):
     
 @api_view(['POST', 'GET'])
 def login(request):
-    Validation = {'status':'invalid'}
 
     if request.method == 'POST':
         email = request.data.get('email')
         password = request.data.get('password')
         try:
-            user = auth.sign_in_with_email_and_password(email,password)
-            Validation['status'] = 'valid'
-        except:
-            Validation['status'] = 'invalid'
+            user = auth.sign_in_with_email_and_password(email,password)            
+            return Response({'status':'valid'})
+        except Exception as e:
+            print(str(e))
+            return Response({'status':'invalid','message':str(e)})
 
-    else:
-        return Response(Validation)
-    return Response({"detail": "No request found"})
 
 
 @api_view(['POST', 'GET'])
 def signup(request):
-    Registration = {'status':'true'}
 
     if request.method == 'POST':
         email = request.data.get('email')
@@ -61,14 +57,35 @@ def signup(request):
         print(email," ",password)
         try:
             user = auth.create_user_with_email_and_password(email,password)
-            Registration['status'] = 'true'
-            return Response(Registration)
+            userID = user['localId']
+            data = {userID:{'Email ID':email,'My reviews':'None'}}
+            database.child('Users').update(data)
+            return Response({'status':'true'})
+        except Exception as e:
+            print(e) 
+            return Response({'status':'false','message':str(e)})
+    
+@api_view(['POST', 'GET'])
+def Prof_review(request):
+    if request.method == 'POST':
+        profName = request.data.get('profName')
+        collegeName = request.data.get('coolegeName')
+        top_tags = []
+        prof_review ={}
+        try:
+            data  = database.chld('Professors')
+            for id in data:
+                if data[id]['Name'] == profName and data[id]['School Name'] == collegeName:
+                    tag = data[id]
+                    tag.pop('Name')
+                    tag.pop('School Name')
+                    tag.pop('School ID')
+                    tag.pop('Rating')
+                    tag.pop('Difficulty')
+                    sorted_tags = sorted(tag.items(), key = lambda x : x[1])
+                    for i in range(0,5):
+                        if sorted_tags[len(sorted_tags)-1-i][1] == 0:
+                            break
+                        top_tags.append(sorted_tags[len(sorted_tags)-1-i][0])
         except:
-            Registration['status'] = 'true'
-            return Response(Registration)
-
-    else:
-        return Response(Registration)
-    
-    return Response({"detail": "No request found"})
-    
+            return Response({'status':'No Data Found'})

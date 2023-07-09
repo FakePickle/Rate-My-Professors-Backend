@@ -15,15 +15,14 @@ const Login= () => {
   const handleLogin = async () => {
     if (email !== '' && password !== '') {
       try {
-        await axios.post(url, { email, password });
-        const response = await axios.get(url);
+        const response = await axios.post(url, { email, password });
         // Handle the response data if needed
-
+        console.log(response)
         if (response.data.status === 'valid') {
           navigate('/'); // Use navigate() to redirect
         }
         else {
-          setError('Invalide email or password');
+          setError(response.message);
         }
       } catch (error) {
         console.error(error);

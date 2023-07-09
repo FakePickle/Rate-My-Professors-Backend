@@ -29,17 +29,16 @@ const Signup = () => {
 
     try {
       // Make an API request to your backend server's authentication endpoint
-      await axios.post(url, {name, email, password });
-      const response = axios.get(url)
+      const response = await axios.post(url, {name, email, password });
       console.log(response)
       // Handle the response from the server
       // If the signup was successful, redirect the user or automatically log them in
-      if (response.status === 'true') {
+      if (response.data.status === 'true') {
         // Redirect the user to the login page
         // You can replace '/login' with the appropriate route for your application
         window.location.href = '/login';
       } else {
-        setError('Signup failed false'); // Display a generic error message
+        setError('Signup failed'); // Display a generic error message
       }
     } catch (error) {
       // Handle any errors that occur during the API request
