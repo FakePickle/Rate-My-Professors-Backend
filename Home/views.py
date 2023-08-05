@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import pyrebase
@@ -19,19 +19,7 @@ firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 database = firebase.database()
 
-def index(request):
-    
-    name = database.child('Professors').child('ABC100000').child('Name').get().val()
-    print(name)
-    return HttpResponse(name)
 
-@api_view(['POST', 'GET'])
-def check(request):
-    if request.method == 'POST':
-        print("found",request.data)
-        return Response(request.data)
-    else:
-        return Response({"detail": "This is check function"})
     
 @api_view(['POST', 'GET'])
 def login(request):
@@ -45,7 +33,6 @@ def login(request):
         except Exception as e:
             print(str(e))
             return Response({'status':'invalid','message':str(e)})
-
 
 
 @api_view(['POST', 'GET'])
@@ -64,28 +51,78 @@ def signup(request):
         except Exception as e:
             print(e) 
             return Response({'status':'false','message':str(e)})
+        
     
 @api_view(['POST', 'GET'])
 def Prof_review(request):
     if request.method == 'POST':
-        profName = request.data.get('profName')
-        collegeName = request.data.get('coolegeName')
-        top_tags = []
-        prof_review ={}
         try:
-            data  = database.chld('Professors')
-            for id in data:
-                if data[id]['Name'] == profName and data[id]['School Name'] == collegeName:
-                    tag = data[id]
-                    tag.pop('Name')
-                    tag.pop('School Name')
-                    tag.pop('School ID')
-                    tag.pop('Rating')
-                    tag.pop('Difficulty')
-                    sorted_tags = sorted(tag.items(), key = lambda x : x[1])
-                    for i in range(0,5):
-                        if sorted_tags[len(sorted_tags)-1-i][1] == 0:
+            Reviews = database.child('test').child('0bc15110-b882-44d4-8277-c2f52d00ca17').child('Reviews').get()
+            tags_List = database.child('test').child('0bc15110-b882-44d4-8277-c2f52d00ca17').child('Tags').get()
+            top_tags = []
+            review_ids = []
+            ProfReviews = []
+            Difficulty =  database.child('test').child('0bc15110-b882-44d4-8277-c2f52d00ca17').child('Difficulty').get().val()
+            Rating = database.child('test').child('0bc15110-b882-44d4-8277-c2f52d00ca17').child('Rating').get().val()
+            if Reviews.each():
+                review_ids = [review.key() for review in Reviews.each()]
+
+            tags = []
+            if tags_List.each():
+                for t in tags_List.each():
+                    if int(t.val()) != 0:
+                        tag_data = [t.key(), t.val()]
+                        tags.append(tag_data)
+
+            tags.sort(key=lambda x: x[1], reverse=True)
+            for i in range(0, 5):
+                if i >= len(tags):
+                    break
+                top_tags.append(tags[i][0])
+
+            for i in review_ids:
+                R = database.child('Reviews').child(i).get()
+                Review_Dict = {}
+                for j in R.each():
+                    Review_Dict[j.key()] = j.val()
+                ProfReviews.append(Review_Dict)
+
+            return Response({'Reviews' : ProfReviews,'Tags' : top_tags, 'Difficulty' : Difficulty, 'Rating' : Rating}) 
+        except Exception as e:
+            print(e)
+            return Response({'status': 'Error', 'message': str(e)})
+   
+        
+@api_view(['POST', 'GET'])
+def Search_Prof(request):
+    if request.method == 'POST':
+        profName = request.data.get('profName')
+        profName = profName.split(" ")
+        prof_list = []
+
+        try:
+            data = database.child('Professors').get()  
+            for id in data.each():  
+                professor = {}
+                name = id.val().get('Name')
+                name = name.split(" ")
+                flag = True
+                if len(name) >= len(profName):
+                    for i in range(0, len(profName)):
+                        if profName[i].lower() != name[i].lower():
+                            flag = False
                             break
-                        top_tags.append(sorted_tags[len(sorted_tags)-1-i][0])
-        except:
-            return Response({'status':'No Data Found'})
+                if flag:
+                    professor['Id'] = id.key()
+                    professor['Name'] = id.val().get('Name')
+                    professor['School'] = id.val().get('School Name')
+                    professor['difficulty'] = id.val().get('Difficulty')
+                    professor['rating'] = 4.5
+                    professor['noOfRatings'] = 15
+                    professor['dept'] = "cs"
+                    prof_list.append(professor)
+            return Response(prof_list)
+        
+        except Exception as e:
+            print(e)
+            return Response({'status': 'No Data Found'})
