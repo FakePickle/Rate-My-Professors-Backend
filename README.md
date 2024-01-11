@@ -46,9 +46,6 @@ Rate My Professor (India) is a web application aimed at providing a platform for
 ## Contributing
 We welcome contributions from the community! If you'd like to contribute, please follow our [contribution guidelines](CONTRIBUTING.md).
 
-## License
-This project is licensed under the [MIT License](LICENSE).
-
 ## Acknowledgments
 - Inspired by the original Rate My Professor website.
 - Special thanks to contributors and supporters.
