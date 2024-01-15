@@ -1,7 +1,7 @@
-# Rate My Professor (India)
+# Rate My Professor for India
 
 ## Project Overview
-Rate My Professor (India) is a web application aimed at providing a platform for students to share and discover information about professors in Indian educational institutions. The platform allows students to rate and review professors based on their teaching style, communication skills, and overall experience. This project is designed to facilitate transparency and help students make informed decisions when selecting courses and professors.
+Rate My Professor is a web application aimed at providing a platform for students to share and discover information about professors in Indian educational institutions. The platform allows students to rate and review professors based on their teaching style, communication skills, and overall experience. This project is designed to facilitate transparency and help students make informed decisions when selecting courses and professors.
 
 ## Features
 
@@ -25,7 +25,6 @@ Rate My Professor (India) is a web application aimed at providing a platform for
 - Backend: Django
 - Database: Firebase (Realtime Database or Firestore)
 - Authentication: Firebase Authentication
-- Deployment: Heroku or similar services
 
 ## Getting Started
 
@@ -43,11 +42,5 @@ Rate My Professor (India) is a web application aimed at providing a platform for
 6. Set up Django database configuration with Firebase.
 7. Run `python manage.py runserver` to start the Django development server.
 
-## Contributing
-We welcome contributions from the community! If you'd like to contribute, please follow our [contribution guidelines](CONTRIBUTING.md).
-
 ## Acknowledgments
 - Inspired by the original Rate My Professor website.
-- Special thanks to contributors and supporters.
-
-Happy rating and reviewing!
